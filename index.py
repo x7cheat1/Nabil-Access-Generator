@@ -16,7 +16,6 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app = Flask(__name__)
 
-# ---------- Constants ----------
 OAUTH_EAT_URL = "https://100067.connect.garena.com/oauth/token/grant"
 INSPECT_TOKEN_URL = "https://prod-api.reward.ff.garena.com/redemption/api/auth/inspect_token/"
 
@@ -37,6 +36,7 @@ def extract_eat_token(input_str):
     return input_str
 
 def perform_eat_login(eat_token):
+    # আপনার কোডের ক্লায়েন্ট আইডি ও সিক্রেট লিস্ট[span_1](start_span)[span_1](end_span)
     clients = [
         {
             "client_id": "100067",
@@ -47,8 +47,10 @@ def perform_eat_login(eat_token):
     ]
 
     headers = {
-        "User-Agent": "FreeFire/1.108.1 (Android)",
+        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 13; SM-G998B Build/TP1A.220624.014)",
         "Content-Type": "application/x-www-form-urlencoded",
+        "Connection": "Keep-Alive",
+        "Accept-Encoding": "gzip"
     }
 
     for cred in clients:
@@ -60,7 +62,7 @@ def perform_eat_login(eat_token):
         }
         try:
             resp = http_session.post(
-                OAUTH_EAT_URL, data=payload, headers=headers, timeout=5
+                OAUTH_EAT_URL, data=payload, headers=headers, timeout=6
             )
             data = resp.json()
             if "access_token" in data:
@@ -77,13 +79,12 @@ def get_name_region_from_reward(access_token):
             "access-token": access_token,
             "user-agent": "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36",
         }
-        resp = http_session.get(INSPECT_TOKEN_URL, headers=headers, timeout=4)
+        resp = http_session.get(INSPECT_TOKEN_URL, headers=headers, timeout=5)
         data = resp.json()
         return data.get("uid"), data.get("name"), data.get("region")
     except:
         return None, None, None
 
-# ---------- Routes ----------
 @app.route("/", methods=["GET"])
 def index():
     html_file = os.path.join(os.path.dirname(__file__), "index.html")
