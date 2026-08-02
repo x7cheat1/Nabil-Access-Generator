@@ -12,10 +12,14 @@ def extract_eat_token(input_str):
     if not input_str:
         return None
     input_str = input_str.strip()
+    
+    # URL থেকে eat প্যারামিটার বের করা (যাতে পুরো লিংক দিলেও কাজ করে)
     if "eat=" in input_str:
-        match = re.search(r'eat=([a-f0-9]+)', input_str)
+        match = re.search(r'eat=([a-zA-Z0-9_\-]+)', input_str)
         if match:
             return match.group(1)
+            
+    # যদি সরাসরি টোকেন দেয়
     return input_str
 
 def get_access_token_from_eat(eat_token):
